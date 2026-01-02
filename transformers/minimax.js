@@ -1,16 +1,17 @@
-// MiniMax Transformer - 支持 MiniMax Coding Plan API
+// MiniMax Transformer - 支持 MiniMax Anthropic API 兼容接口
 
 class MiniMaxTransformer {
   name = "minimax";
 
   async transformRequestIn(req, provider) {
-    const headers = {
-      ...(req.headers || {}),
-      "x-api-key": provider.apiKey,
-    };
-
+    const headers = { ...(req.headers || {}) };
+    
+    delete headers["x-api-key"];
+    delete headers["X-Api-Key"];
     delete headers.authorization;
     delete headers.Authorization;
+    
+    headers["Authorization"] = `Bearer ${provider.apiKey}`;
 
     return {
       ...req,
